@@ -124,7 +124,6 @@ The following chart contains the baseline mappings for all system endpoints.
 | **PUT** | `/api/profile` | Profile Management | `updateProfile` | Authenticated User | Modifies personal attributes like username, name, and phone details for the caller. |
 | **PATCH** | `/api/profile/password` | Profile Management | `resetProfilePassword` | Authenticated User | Changes application passwords from an authorized user profile control window. |
 | **PATCH** | `/api/profile/phone` | Profile Management | `resetPhoneNumber` | Authenticated User | Updates primary phone tracking details for the currently logged-in account. |
-
 | **POST** | `/api/forms/{formId}/unsubmit` | Tax Forms | `unsubmitCurrentForm` | Authenticated User | Rolls back active tracking flags from locked status codes to a modifiable `IN_PROGRESS` setup. |
 | **POST** | `/api/admin/users/register` | Admin Management | `adminCreateUserAccount` | Admin Only | Allows administrators to directly spin up accounts with custom access roles. |
 | **GET** | `/api/admin/forms/search` | Admin Management | `getAllForms` | Admin Only | Returns a global list of every tax form created in the system, filtered by filing year. |
