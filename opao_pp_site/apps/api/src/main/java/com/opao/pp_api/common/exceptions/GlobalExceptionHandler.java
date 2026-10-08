@@ -68,6 +68,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleEntityNotFoundException(EntityNotFoundException ex) {
+        Map<String, Object> errorDetails = buildErrorDetails(ex, ex.getMessage(), "RESOURCE_NOT_FOUND", HttpStatus.NOT_FOUND, false);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(ResourceConflictException.class)
     public ResponseEntity<Map<String, Object>> handleConflictException(ResourceConflictException ex) {
         Map<String, Object> errorDetails = buildErrorDetails(ex, ex.getMessage(), "CONFLICT", HttpStatus.CONFLICT, false);

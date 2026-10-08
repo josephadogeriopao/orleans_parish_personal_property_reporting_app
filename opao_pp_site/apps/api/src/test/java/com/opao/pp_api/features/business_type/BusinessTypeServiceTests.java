@@ -70,6 +70,39 @@ class BusinessTypeServiceTests {
             
             verify(repository, times(1)).deleteById(1);
         }
+
+        @Test
+        @DisplayName("Should map a persisted business type when looking up an existing identifier")
+        void getBusinessTypeById_Success() {
+            BusinessTypeEntity entity = new BusinessTypeEntity();
+            BusinessType domain = BusinessType.builder().id(8).code(108).description("Manufacturing").build();
+            when(repository.findById(8)).thenReturn(Optional.of(entity));
+            when(mapper.toDomain(entity)).thenReturn(domain);
+
+            Optional<BusinessType> result = service.getBusinessTypeById(8);
+
+            assertTrue(result.isPresent());
+            assertEquals(108, result.get().getCode());
+            verify(mapper).toDomain(entity);
+        }
+
+        @Test
+        @DisplayName("Should persist and map changes to an existing business type")
+        void updateBusinessType_Success() {
+            BusinessTypeEntity existingEntity = new BusinessTypeEntity();
+            BusinessType input = BusinessType.builder().description("Updated description").build();
+            BusinessType updated = BusinessType.builder().id(3).code(103).description("Updated description").build();
+            when(repository.findById(3)).thenReturn(Optional.of(existingEntity));
+            when(repository.save(existingEntity)).thenReturn(existingEntity);
+            when(mapper.toDomain(existingEntity)).thenReturn(updated);
+
+            Optional<BusinessType> result = service.updateBusinessType(3, input);
+
+            assertTrue(result.isPresent());
+            assertEquals("Updated description", result.get().getDescription());
+            verify(mapper).updateEntityFromDomain(input, existingEntity);
+            verify(repository).save(existingEntity);
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -141,6 +174,54 @@ class BusinessTypeServiceTests {
 
             assertEquals("Business type record with ID 999 does not exist.", exception.getMessage());
             verify(repository, never()).deleteById(any());
+        }
+
+        @Test
+        @DisplayName("Should propagate persistence failures without mapping an unsaved business type")
+        void createBusinessType_PropagatesRepositoryFailure() {
+            BusinessType input = BusinessType.builder().code(203).description("Retail").build();
+            BusinessTypeEntity entity = new BusinessTypeEntity();
+            IllegalStateException failure = new IllegalStateException("database unavailable");
+            when(repository.findByBusinessCode(203)).thenReturn(Optional.empty());
+            when(mapper.toEntity(input)).thenReturn(entity);
+            when(repository.save(entity)).thenThrow(failure);
+
+            IllegalStateException thrown = assertThrows(IllegalStateException.class,
+                    () -> service.createBusinessType(input));
+
+            assertSame(failure, thrown);
+            verify(mapper, never()).toDomain(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Boundary and Empty-Result Scenarios")
+    class BoundaryCases {
+
+        @Test
+        @DisplayName("Should return an empty Optional for the largest valid identifier when no row exists")
+        void getBusinessTypeById_MaxIntegerMissing() {
+            when(repository.findById(Integer.MAX_VALUE)).thenReturn(Optional.empty());
+
+            assertTrue(service.getBusinessTypeById(Integer.MAX_VALUE).isEmpty());
+            verify(mapper, never()).toDomain(any());
+        }
+
+        @Test
+        @DisplayName("Should allow the largest integer business code when it is unique")
+        void createBusinessType_MaxIntegerCode() {
+            BusinessType input = BusinessType.builder().code(Integer.MAX_VALUE).description("Boundary").build();
+            BusinessTypeEntity entity = new BusinessTypeEntity();
+            BusinessType saved = BusinessType.builder().id(10).code(Integer.MAX_VALUE).description("Boundary").build();
+            when(repository.findByBusinessCode(Integer.MAX_VALUE)).thenReturn(Optional.empty());
+            when(mapper.toEntity(input)).thenReturn(entity);
+            when(repository.save(entity)).thenReturn(entity);
+            when(mapper.toDomain(entity)).thenReturn(saved);
+
+            BusinessType result = service.createBusinessType(input);
+
+            assertEquals(Integer.MAX_VALUE, result.getCode());
+            verify(repository).save(entity);
         }
     }
 }

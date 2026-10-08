@@ -3,6 +3,7 @@ package com.opao.pp_api.features.form;
 import com.opao.pp_api.features.form.mapper.FormMapper;
 import com.opao.pp_api.features.form.model.Form;
 import com.opao.pp_api.features.form.model.FormEntity;
+import com.opao.pp_api.features.form_status.model.FormStatusEntity;
 import com.opao.pp_api.features.form_status.FormStatusRepository; // Ensure these repositories exist
 import com.opao.pp_api.features.form_type.FormTypeRepository;
 import com.opao.pp_api.features.user.UserRepository;
@@ -149,12 +150,14 @@ public class FormService {
         }
         
         if (domain.getStatusName() != null) {
-            entity.setStatus(formStatusRepository.getReferenceById(domain.getId()));
+            FormStatusEntity status = formStatusRepository.findByName(domain.getStatusName())
+                .orElseThrow(() -> new EntityNotFoundException(
+                    "Form status with name " + domain.getStatusName() + " does not exist."));
+            entity.setStatus(status);
         }
 
         if (domain.getUserId() != null) {
-            // Updated mapping reference to handle target proxy identities
-            entity.setUserId(userRepository.getReferenceById(domain.getId()));
+            entity.setUserId(userRepository.getReferenceById(domain.getUserId()));
         }
     }
 }
