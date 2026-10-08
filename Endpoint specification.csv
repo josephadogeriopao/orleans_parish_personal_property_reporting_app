@@ -1,0 +1,25 @@
+HTTP Method,Endpoint Path,Resource Group,Legacy Java Method,Access Control Level,Description
+POST,/api/auth/register,Auth & Identity,createUserAccount,Public,Registers a new user account with DISABLED status and creates a verification tracking token.
+POST,/api/auth/verify-email,Auth & Identity,verifyEmailAddress,Public,Validates the registration UUID token and typed credentials to switch user status to ENABLED.
+POST,/api/auth/resend-verification,Auth & Identity,resendVerificationEmail,Public,Clears old verification details and creates a new tracking record before sending out an update notice.
+POST,/api/auth/login,Auth & Identity,login,Public,Checks login criteria. Increments failure counters to lock accounts if thresholds break or provides JWT tokens upon success.
+POST,/api/auth/forgot-password,Auth & Identity,submitResetPasswordRequest,Public,Processes user password recovery requests and sends out validation notifications.
+POST,/api/auth/reset-password,Auth & Identity,resetPassword,Public,Updates account access passwords when supplied with a valid registration token string.
+PUT,/api/profile,Profile Management,updateProfile,Authenticated User,Modifies personal attributes like username full name and telephone details for the active caller profile.
+PATCH,/api/profile/password,Profile Management,resetProfilePassword,Authenticated User,Changes application entry passwords directly from an authorized user profile control window.
+PATCH,/api/profile/phone,Profile Management,resetPhoneNumber,Authenticated User,Updates primary phone tracking details for the currently logged-in account.
+GET,/api/forms,Tax Forms,getForms,Authenticated User,Returns user-linked tax forms sorted in sequence by tax processing year and current execution status.
+POST,/api/forms/claim-lat5,Tax Forms,fileNewLAT5,Authenticated User,Claims a free tax form record tracking object via matching identification properties and adds it to the user.
+GET,/api/forms/{formId},Tax Forms,getForm / getCurrentForm,Authenticated User,Retrieves structural attributes for a specific data form after checking record ownership.
+PUT,/api/forms/{formId}/business-info,Tax Forms,storeBusinessInfo,Authenticated User,Updates enterprise profile settings and changes filing timeline records automatically to IN_PROGRESS.
+POST,/api/forms/{formId}/inventories,Tax Forms,storeInventories,Authenticated User,Saves structural data inventory tables to a targeted form document.
+POST,/api/forms/{formId}/filings,Tax Forms,storeFilings,Authenticated User,Appends primary cost and asset documentation logs to the specified tax form.
+DELETE,/api/forms/{formId}/filings,Tax Forms,deleteFilings,Authenticated User,Deletes selected line items and moves parent tracking document states back to IN_PROGRESS.
+POST,/api/forms/{formId}/submit,Tax Forms,submitCurrentForm,Authenticated User,Validates form metrics logs completion timestamps changes state tracking metrics to SUBMITTED and fires email receipts.
+POST,/api/forms/{formId}/unsubmit,Tax Forms,unsubmitCurrentForm,Authenticated User,Rollbacks active tracking flags from locked status codes to a modifiable IN_PROGRESS setup.
+POST,/api/admin/users/register,Administrative Management,adminCreateUserAccount,Admin Only,Allows administrators to directly spin up accounts with custom access roles while skipping basic checks.
+GET,/api/admin/forms/search,Administrative Management,getAllForms,Admin Only,Returns a global overview list of every tax form created in the system filtering by a calendar filing year.
+POST,/api/admin/users/{userId}/enable,Administrative Management,adminEnableUserAccount,Admin Only,Force-enables a specified user profile or releases administrative login freezes.
+POST,/api/admin/users/{userId}/lock,Administrative Management,adminLockUserAccount,Admin Only,Restricts profile access instantly by marking an account status as LOCKED.
+POST,/api/admin/users/{userId}/disable,Administrative Management,adminDisableUserAccount,Admin Only,Deactivates matching user credentials and suspends access rights across endpoints.
+POST,/api/admin/system/cache-evict,Administrative Management,flushEntityManagerCache,Admin Only,Clears shared internal data persistence caches to ensure instant database consistency.
