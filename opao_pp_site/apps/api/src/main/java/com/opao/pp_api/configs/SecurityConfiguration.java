@@ -38,8 +38,8 @@ public class SecurityConfiguration {
      * 💡 HELPER FUNCTION: Defines a PasswordEncoder bean.
      * You can inject this right away into your UserService to safely run password hashing.
      */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    // @Bean
+    // public PasswordEncoder passwordEncoder() {
+    //     return new BCryptPasswordEncoder();
+    // }
 }

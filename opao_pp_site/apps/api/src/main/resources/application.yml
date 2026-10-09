@@ -1,10 +1,11 @@
 spring:
-  # 💡 FORCE SPRING BOOT TO READ LOCAL ENV PARAMETERS IN SANDBOX DEV
+  # 💡 FORCE SPRING BOOT TO READ LOCAL ENVIRONMENT PARAMETERS (.env)
   config:
-    import: "optional:file:.env[.properties]"
-    
+    import: "optional:file:.env"
+
   application:
     name: pp_api
+
   docker:
     compose:
       enabled: false
@@ -27,6 +28,16 @@ spring:
     enabled: true
     change-log: "classpath:db/changelog/master.yaml"
     drop-first: false
+
+# Custom Application Metrics (Moved completely out of spring root block)
+application:
+  security:
+    argon2:
+      salt-length: 16       # Length of the random salt in bytes (16 bytes = 128 bits)
+      hash-length: 32       # Length of the generated hash in bytes
+      parallelism: 1        # Number of threads used for computation
+      memory: 65536         # Memory cost in KiB (65536 KiB = 64 MiB)
+      iterations: 3         # CPU cost / number of passes over the memory
 
 server:
   port: 9000
