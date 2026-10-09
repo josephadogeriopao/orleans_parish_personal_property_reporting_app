@@ -38,6 +38,10 @@ public class UserService {
         return userRepository.findByUsername(username).map(userMapper::toDomain);
     }
 
+    public Optional<User> getUserByEmailAddress(String email) {
+        return userRepository.findByEmailAddress(email).map(userMapper::toDomain);
+    }
+
     /**
      * Creates a brand new user record. 
      * Flexible enough for self-registration, admin creation, and disabled states.

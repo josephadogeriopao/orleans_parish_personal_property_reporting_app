@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import com.opao.pp_api.features.user_role.model.UserRole;
 import com.opao.pp_api.features.user_status.model.UserStatus;
+import java.time.LocalDateTime;
 
 
 
@@ -23,6 +24,8 @@ public class User {
     private String phoneNumber;    
     private String password;
     private boolean isActive;
+    private LocalDateTime lastLoginTime;
+    private Integer failedLogins;
     
     // Added missing relation destination slots for MapStruct flattening
     private UserRole userRoleId;   

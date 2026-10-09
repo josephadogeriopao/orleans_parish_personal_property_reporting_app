@@ -28,6 +28,8 @@ public interface UserMapper {
     @Mapping(source = "password", target = "password")
     @Mapping(source = "userRoleId.userRoleId", target = "userRoleId")
     @Mapping(source = "userStatus.userStatusId", target = "userStatusId")
+    @Mapping(source = "lastLoginTime", target = "lastLoginTime")
+    @Mapping(source = "failedLogins", target = "failedLogins")
     User toDomain(UserEntity entity);
 
     @Mapping(source = "id", target = "userId")
@@ -36,6 +38,8 @@ public interface UserMapper {
     @Mapping(source = "userRoleId", target = "userRoleId")
     @Mapping(source = "userStatusId", target = "userStatus")
     @Mapping(target = "formCollection", ignore = true)
+    @Mapping(source = "lastLoginTime", target = "lastLoginTime")
+    @Mapping(source = "failedLogins", target = "failedLogins")
     UserEntity toEntity(User domain);
 
     @Mapping(target = "userId", ignore = true)
