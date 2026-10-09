@@ -29,15 +29,35 @@ spring:
     change-log: "classpath:db/changelog/master.yaml"
     drop-first: false
 
-# Custom Application Metrics (Moved completely out of spring root block)
+  # 📧 Unified Mail Infrastructure
+  mail:
+    host: "${SMTP_HOST:localhost}"
+    port: ${SMTP_PORT:587}       # 🟢 Kept numeric fix (no quotes)
+    username: "${SMTP_USERNAME:}"
+    password: "${SMTP_PASSWORD:}"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            #TODO this should be configured properly for production environments
+            # In production, replace "*" with the specific trusted certificate authorities or hosts
+            trust: "*"  # Trust all SSL certificates 
 application:
   security:
     argon2:
-      salt-length: 16       # Length of the random salt in bytes (16 bytes = 128 bits)
-      hash-length: 32       # Length of the generated hash in bytes
-      parallelism: 1        # Number of threads used for computation
-      memory: 65536         # Memory cost in KiB (65536 KiB = 64 MiB)
-      iterations: 3         # CPU cost / number of passes over the memory
+      salt-length: 16       
+      hash-length: 32       
+      parallelism: 1        
+      memory: 65536         
+      iterations: 3         
+  frontend-url: "${FRONTEND_URL:http://localhost:3000}"
+  email:
+    from-address: "${EMAIL_FROM_ADDRESS:josephadogeridev@gmail.com}"
+    from-name: "Orleans Parish Assessor's Office"
 
 server:
   port: 9000

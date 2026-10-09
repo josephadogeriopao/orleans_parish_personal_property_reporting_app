@@ -21,8 +21,26 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["DB_USERNAME", "DB_PASSWORD"],
-      "passThroughEnv": ["DB_USERNAME", "DB_PASSWORD"]
+      "env": [
+        "DB_USERNAME", 
+        "DB_PASSWORD",
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "SMTP_USERNAME",
+        "SMTP_PASSWORD",
+        "FRONTEND_URL",
+        "EMAIL_FROM_ADDRESS"
+      ],
+      "passThroughEnv": [
+        "DB_USERNAME", 
+        "DB_PASSWORD",
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "SMTP_USERNAME",
+        "SMTP_PASSWORD",
+        "FRONTEND_URL",
+        "EMAIL_FROM_ADDRESS"
+      ]
     },
     "migration:show": {
       "cache": false,
@@ -47,8 +65,26 @@
     "schema:sync": {
       "cache": false,
       "inputs": ["src/main/java/**", "pom.xml"],
-      "env": ["DB_USERNAME", "DB_PASSWORD"],
-      "passThroughEnv": ["DB_USERNAME", "DB_PASSWORD"]
+      "env": [
+        "DB_USERNAME", 
+        "DB_PASSWORD",
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "SMTP_USERNAME",
+        "SMTP_PASSWORD",
+        "FRONTEND_URL",
+        "EMAIL_FROM_ADDRESS"
+      ],
+      "passThroughEnv": [
+        "DB_USERNAME", 
+        "DB_PASSWORD",
+        "SMTP_HOST",
+        "SMTP_PORT",
+        "SMTP_USERNAME",
+        "SMTP_PASSWORD",
+        "FRONTEND_URL",
+        "EMAIL_FROM_ADDRESS"
+      ]
     },
     "schema:log": {
       "cache": false,

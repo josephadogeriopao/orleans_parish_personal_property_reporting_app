@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <p>Dear <span th:text="${name}">User</span>;</p>
+    <p>
+      Please click <a th:href="${activationUrl}" style="font-weight: bold; color: #0056b3; text-decoration: underline;">THIS LINK</a> 
+      to verify your email address in order to activate your OPOPPR account.
+    </p>
+    <p>This link will expire in <span th:text="${expirationDuration}">1 hour</span>.</p>
+    <p>If you have any problems setting up your account, please contact our office.</p>
+    <p>Thank you.</p>
+    <p>
+      Orleans Parish Assessor's Office<br/>
+      Business Personal Property Department<br/>
+      Contact Phone: (504) 754-8818<br/>
+      Contact Email: personal_property@orleansassessors.com
+    </p>
+  </body>
+</html>

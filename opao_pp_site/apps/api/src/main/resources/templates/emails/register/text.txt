@@ -1,0 +1,9 @@
+Dear [(${name})],
+
+Please open this link in your browser to verify your email address and activate your OPOPPR account:
+[(${activationUrl})]
+
+This link will expire in [(${expirationDuration})].
+
+Thank you.
+Orleans Parish Assessor's Office

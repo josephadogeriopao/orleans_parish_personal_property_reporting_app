@@ -4,10 +4,14 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RestController;
+// 💡 Import the clashing auto-configuration explicitly
+import de.codecentric.boot.admin.server.config.AdminServerNotifierAutoConfiguration; 
 
-@SpringBootApplication(scanBasePackages = {
-    "com.opao.pp_api" // Forces Spring to scan your package and target/generated packages completely
-})
+@SpringBootApplication(
+    scanBasePackages = { "com.opao.pp_api" },
+    // 💡 FIX: Forcefully block the admin server mail notifier configuration on boot permanently
+    exclude = { AdminServerNotifierAutoConfiguration.class } 
+)
 @RestController 
 public class PpApiApplication {
 

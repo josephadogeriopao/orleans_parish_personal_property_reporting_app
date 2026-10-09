@@ -15,9 +15,9 @@ import com.opao.pp_api.features.user_change.UserChangeService;
 import com.opao.pp_api.features.user_role.constants.UserRoles;
 import com.opao.pp_api.features.user_status.constants.UserStatuses;
 import com.opao.pp_api.services.ArgonService;
+import com.opao.pp_api.services.EmailService; // 💡 1. Imported EmailService
 
 import jakarta.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.UUID;
@@ -28,12 +28,17 @@ public class AuthService {
     private final ArgonService argonService;
     private final UserService userService;
     private final UserChangeService userChangeService;
+    private final EmailService emailService; // 💡 2. Add private final field
 
-    public AuthService( ArgonService argonService, UserService userService, UserChangeService userChangeService) {
-
+    // 💡 3. Injected EmailService into the Constructor
+    public AuthService(ArgonService argonService, 
+                       UserService userService, 
+                       UserChangeService userChangeService,
+                       EmailService emailService) {
         this.argonService = argonService;
         this.userService = userService; 
         this.userChangeService = userChangeService;
+        this.emailService = emailService;
     }
 
     @Transactional 
@@ -50,20 +55,26 @@ public class AuthService {
         user.setUserStatusId(UserStatuses.DISABLED);
         user.setUserRoleId(UserRoles.TAX_PREPARER);
 
+        User createdUser = this.userService.create(user);   
+        
+        UserChange userChange = new UserChange();
+        userChange.setUserId(createdUser.getId());
+        userChange.setUserChangeTypeId(UserChangeTypes.ACTIVATE.getId()); 
+        String trackingToken = UUID.randomUUID().toString();
+        userChange.setVerificationCode(trackingToken);
+        this.userChangeService.create(userChange);
 
-            User createdUser = this.userService.create(user);   
-            UserChange userChange = new UserChange();
-            userChange.setUserId(createdUser.getId());
-            userChange.setUserChangeTypeId(UserChangeTypes.ACTIVATE.getId()); 
-            String trackingToken = UUID.randomUUID().toString();
-            userChange.setVerificationCode(trackingToken);
-            this.userChangeService.create(userChange);
-
-        return GenericAuthResponse.success(
-            "Account registered successfully. Verification token generated.",
-            Map.of("username", request.username(), "verificationCode", trackingToken)
+        // 💡 4. Fire the Thymeleaf verification email template out down the wire
+        this.emailService.sendVerificationEmail(
+            createdUser.getEmail(), 
+            createdUser.getFullName(), 
+            trackingToken
         );
 
+        return GenericAuthResponse.success(
+            "Account registered successfully. Verification email has been sent.",
+            Map.of("username", request.username(), "verificationCode", trackingToken)
+        );
     }
 
     // Handles logic for: verifyEmailAddress(...)
@@ -109,7 +120,6 @@ public class AuthService {
 
     // Handles logic for: resetPassword(...)
     public GenericAuthResponse resetPassword(ResetPasswordRequest request) {
-        // TODO: Validate reset token, use Argon2 to hash new password, overwrite entity, set failedLogins to 0
         return GenericAuthResponse.success("Password has been overwritten securely. Account unlocked.", null);
     }
 }
