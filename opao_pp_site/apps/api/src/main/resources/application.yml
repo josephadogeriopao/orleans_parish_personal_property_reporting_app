@@ -3,8 +3,8 @@ spring:
   config:
     import: 
       - "optional:file:.env"
-      - "optional:classpath:application-mail.yml"  # 🟢 Imports email setup
-      - "optional:classpath:application-app.yml"   # 🟢 Imports app configurations
+      - "optional:classpath:config/application-mail.yml"  # 🟢 Imports email setup
+      - "optional:classpath:config/application-app.yml"   # 🟢 Imports app configurations
 
   application:
     name: pp_api

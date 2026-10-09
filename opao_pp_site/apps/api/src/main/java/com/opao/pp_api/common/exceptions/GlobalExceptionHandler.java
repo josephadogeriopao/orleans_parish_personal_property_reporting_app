@@ -62,6 +62,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(VerificationException.class)
+    public ResponseEntity<Map<String, Object>> handleVerificationException(VerificationException ex) {
+        Map<String, Object> errorDetails = buildErrorDetails(ex, ex.getMessage(), "VERIFICATION_FAILED", HttpStatus.BAD_REQUEST, false);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleResourceNotFoundException(ResourceNotFoundException ex) {
         Map<String, Object> errorDetails = buildErrorDetails(ex, ex.getMessage(), "RESOURCE_NOT_FOUND", HttpStatus.NOT_FOUND, false);
