@@ -12,7 +12,7 @@ import com.opao.pp_api.common.validation.ValidEmail;
 
 public record RegisterRequest(
     @ValidUsername    
-    @Schema(example = "johndoe", description = "The unique username for the new account")
+    // @Schema(example = "johndoe", description = "The unique username for the new account")
     @JsonProperty("username")
     String username, 
     @ValidPassword

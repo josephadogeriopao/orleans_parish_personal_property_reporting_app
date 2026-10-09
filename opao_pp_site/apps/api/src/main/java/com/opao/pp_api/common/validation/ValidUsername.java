@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Pattern;
 import java.lang.annotation.*;
 
 import com.opao.pp_api.common.constants.ValidationRegexConstants;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import com.opao.pp_api.common.constants.ValidationRangeConstants;
 
 @Documented
@@ -16,6 +19,7 @@ import com.opao.pp_api.common.constants.ValidationRangeConstants;
 @Retention(RetentionPolicy.RUNTIME)
 @NotBlank(message = "Username cannot be blank")
 @Pattern(regexp = ValidationRegexConstants.USERNAME_REGEX, message = "Username must be " + ValidationRangeConstants.USERNAME_MIN_LENGTH + "-" + ValidationRangeConstants.USERNAME_MAX_LENGTH + " characters long, start with a letter, and contain only alphanumeric characters or underscores")
+@Schema(example = "johndoe1", description = "The unique username for the new account")
 public @interface ValidUsername {
     String message() default "Invalid username";
     Class<?>[] groups() default {};
