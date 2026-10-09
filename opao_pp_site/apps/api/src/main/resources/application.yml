@@ -1,7 +1,10 @@
 spring:
-  # 💡 FORCE SPRING BOOT TO READ LOCAL ENVIRONMENT PARAMETERS (.env)
+  # 💡 FORCE SPRING BOOT TO READ LOCAL ENVIRONMENT AND CHILD YAML PROFILES
   config:
-    import: "optional:file:.env"
+    import: 
+      - "optional:file:.env"
+      - "optional:classpath:application-mail.yml"  # 🟢 Imports email setup
+      - "optional:classpath:application-app.yml"   # 🟢 Imports app configurations
 
   application:
     name: pp_api
@@ -28,36 +31,6 @@ spring:
     enabled: true
     change-log: "classpath:db/changelog/master.yaml"
     drop-first: false
-
-  # 📧 Unified Mail Infrastructure
-  mail:
-    host: "${SMTP_HOST:localhost}"
-    port: ${SMTP_PORT:587}       # 🟢 Kept numeric fix (no quotes)
-    username: "${SMTP_USERNAME:}"
-    password: "${SMTP_PASSWORD:}"
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-          ssl:
-            #TODO this should be configured properly for production environments
-            # In production, replace "*" with the specific trusted certificate authorities or hosts
-            trust: "*"  # Trust all SSL certificates 
-application:
-  security:
-    argon2:
-      salt-length: 16       
-      hash-length: 32       
-      parallelism: 1        
-      memory: 65536         
-      iterations: 3         
-  frontend-url: "${FRONTEND_URL:http://localhost:3000}"
-  email:
-    from-address: "${EMAIL_FROM_ADDRESS:josephadogeridev@gmail.com}"
-    from-name: "Orleans Parish Assessor's Office"
 
 server:
   port: 9000

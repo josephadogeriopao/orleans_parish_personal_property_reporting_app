@@ -1,5 +1,6 @@
 package com.opao.pp_api.features.auth;
 
+import com.opao.pp_api.configs.VerificationProperties;
 import com.opao.pp_api.features.auth.dto.request.ForgotPasswordRequest;
 import com.opao.pp_api.features.auth.dto.request.LoginRequest;
 import com.opao.pp_api.features.auth.dto.request.RegisterRequest;
@@ -29,16 +30,19 @@ public class AuthService {
     private final UserService userService;
     private final UserChangeService userChangeService;
     private final EmailService emailService; // 💡 2. Add private final field
+    private final VerificationProperties verificationProperties;
 
     // 💡 3. Injected EmailService into the Constructor
     public AuthService(ArgonService argonService, 
                        UserService userService, 
                        UserChangeService userChangeService,
-                       EmailService emailService) {
+                       EmailService emailService,
+                       VerificationProperties verificationProperties) {
         this.argonService = argonService;
         this.userService = userService; 
         this.userChangeService = userChangeService;
         this.emailService = emailService;
+        this.verificationProperties = verificationProperties;
     }
 
     @Transactional 
