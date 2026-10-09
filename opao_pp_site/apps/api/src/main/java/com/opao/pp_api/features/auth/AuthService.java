@@ -81,7 +81,6 @@ public class AuthService {
         );
     }
 
-    // Handles logic for: verifyEmailAddress(...)
     public GenericAuthResponse verifyEmail(VerifyEmailRequest request) {
         // TODO: Validate token, check password via Argon2 matches, set status to ENABLED
         return GenericAuthResponse.success("Email address verified. Account status updated to ENABLED.", null);
