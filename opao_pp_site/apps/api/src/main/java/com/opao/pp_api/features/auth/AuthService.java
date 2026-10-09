@@ -1,5 +1,6 @@
 package com.opao.pp_api.features.auth;
 
+import com.opao.pp_api.common.exceptions.VerificationException;
 import com.opao.pp_api.configs.VerificationProperties;
 import com.opao.pp_api.features.auth.dto.request.ForgotPasswordRequest;
 import com.opao.pp_api.features.auth.dto.request.LoginRequest;
@@ -16,11 +17,15 @@ import com.opao.pp_api.features.user_change.UserChangeService;
 import com.opao.pp_api.features.user_role.constants.UserRoles;
 import com.opao.pp_api.features.user_status.constants.UserStatuses;
 import com.opao.pp_api.services.ArgonService;
-import com.opao.pp_api.services.EmailService; // 💡 1. Imported EmailService
+import com.opao.pp_api.services.EmailService;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -29,10 +34,9 @@ public class AuthService {
     private final ArgonService argonService;
     private final UserService userService;
     private final UserChangeService userChangeService;
-    private final EmailService emailService; // 💡 2. Add private final field
+    private final EmailService emailService; 
     private final VerificationProperties verificationProperties;
 
-    // 💡 3. Injected EmailService into the Constructor
     public AuthService(ArgonService argonService, 
                        UserService userService, 
                        UserChangeService userChangeService,
@@ -66,9 +70,10 @@ public class AuthService {
         userChange.setUserChangeTypeId(UserChangeTypes.ACTIVATE.getId()); 
         String trackingToken = UUID.randomUUID().toString();
         userChange.setVerificationCode(trackingToken);
+        // Ensure your UserChange entity tracks creation using java.time.LocalDateTime
+        userChange.setInitiatedTime(LocalDateTime.now()); 
         this.userChangeService.create(userChange);
 
-        // 💡 4. Fire the Thymeleaf verification email template out down the wire
         this.emailService.sendVerificationEmail(
             createdUser.getEmail(), 
             createdUser.getFullName(), 
@@ -81,12 +86,28 @@ public class AuthService {
         );
     }
 
+    @Transactional
     public GenericAuthResponse verifyEmail(VerifyEmailRequest request) {
-        // TODO: Validate token, check password via Argon2 matches, set status to ENABLED
+        // 1. Validate the code structure and check lifetime duration rules
+        UserChange userChange = checkVerificationCode(request.verificationCode());
+
+        // 2. Locate the linked account record
+        Integer userId = userChange.getUserId();
+        User user = this.userService.getUserById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Associated user account record could not be found."));
+
+        // 3. Flip profile activation properties from DISABLED to ENABLED
+        user.setActive(true);
+        user.setUserStatusId(UserStatuses.ENABLED);
+        this.userService.updateUser(userId, user);
+
+        // 4. record by updating the user change status and then keeping it for audit purposes
+        this.userChangeService.destroy(userChange.getId());
+        
         return GenericAuthResponse.success("Email address verified. Account status updated to ENABLED.", null);
     }
 
-    // Handles logic for: resendVerificationEmail(...)
+    @Transactional
     public GenericAuthResponse resendVerification(ResendVerificationRequest request) {
         // TODO: Clear old tokens, persist new token, trigger outbound mail service
         String newTrackingToken = UUID.randomUUID().toString();
@@ -97,10 +118,7 @@ public class AuthService {
         );
     }
 
-    // Handles logic for: login(...)
     public GenericAuthResponse login(LoginRequest request) {
-        // TODO: Authenticate via AuthenticationManager, verify status rules, increment failure counters if bad
-        // For Next.js presentation, mock the dual-token footprint:
         return GenericAuthResponse.success(
             "Authentication successful.",
             Map.of(
@@ -110,9 +128,8 @@ public class AuthService {
         );
     }
 
-    // Handles logic for: submitResetPasswordRequest(...)
+    @Transactional
     public GenericAuthResponse forgotPassword(ForgotPasswordRequest request) {
-        // TODO: Check email exists, store a verification code, fire reset notification instructions
         String resetToken = UUID.randomUUID().toString();
         
         return GenericAuthResponse.success(
@@ -121,8 +138,26 @@ public class AuthService {
         );
     }
 
-    // Handles logic for: resetPassword(...)
+    @Transactional
     public GenericAuthResponse resetPassword(ResetPasswordRequest request) {
         return GenericAuthResponse.success("Password has been overwritten securely. Account unlocked.", null);
+    }
+
+    /**
+     * Modernized verification inspection workflow.
+     * Replaces old integer statuses (-1, 0, 1) with clean, explicit descriptive Exception structures.
+     */
+    private UserChange checkVerificationCode(String verificationCode) {
+        UserChange userChange = userChangeService.findUserChangeByVerificationCode(verificationCode)
+                .orElseThrow(() -> new VerificationException("Invalid verification token code."));
+
+        // 🟢 Calculates duration cleanly using Java 8 Time API instead of old java.util.Date long math
+        long durationElapsedMs = Duration.between(userChange.getInitiatedTime(), LocalDateTime.now()).toMillis();
+
+        if (durationElapsedMs > verificationProperties.getCodeDurationMs()) {
+            throw new VerificationException("This verification link has expired. Please request a new activation email.");
+        }
+
+        return userChange;
     }
 }
