@@ -8,9 +8,11 @@ import java.lang.annotation.*;
 
 import com.opao.pp_api.common.constants.ValidationRegexConstants;
 import com.opao.pp_api.common.constants.ValidationRangeConstants;
+
 @Documented
 @Constraint(validatedBy = {})
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+// 💡 FIX: Added ElementType.METHOD so Jakarta can validate Java Record accessor getters cleanly
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @NotBlank(message = "Parcel ID cannot be blank")
 @Pattern(regexp = ValidationRegexConstants.PARCEL_ADDRESS_REGEX, message = "Parcel ID format is invalid (Max " + ValidationRangeConstants.PARCEL_ADDRESS_MAX_LENGTH + " alphanumeric/hyphen characters)")
@@ -21,7 +23,8 @@ public @interface ValidParcelAddress {
 
     @Documented
     @Constraint(validatedBy = {})
-    @Target({ElementType.FIELD, ElementType.PARAMETER})
+    // 💡 FIX: Added ElementType.METHOD here as well for optional record field validations
+    @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Pattern(regexp = ValidationRegexConstants.PARCEL_ADDRESS_REGEX, message = "Parcel ID format is invalid (Max " + ValidationRangeConstants.PARCEL_ADDRESS_MAX_LENGTH + " alphanumeric/hyphen characters)")
     @interface Optional {

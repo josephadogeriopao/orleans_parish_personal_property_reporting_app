@@ -8,7 +8,8 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = {})
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+// 💡 FIX: Added ElementType.METHOD so Jakarta can validate Java Record accessor getters cleanly
+@Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @NotNull(message = "ID cannot be null")
 @Positive(message = "ID must be a positive number")
@@ -19,7 +20,8 @@ public @interface ValidForeignId {
 
     @Documented
     @Constraint(validatedBy = {})
-    @Target({ElementType.FIELD, ElementType.PARAMETER})
+    // 💡 FIX: Added ElementType.METHOD here as well for optional relational fields
+    @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     @Positive(message = "ID must be a positive number")
     @interface Optional {

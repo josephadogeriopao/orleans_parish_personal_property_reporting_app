@@ -6,7 +6,7 @@ public final class UserChangeTypes {
     
     private UserChangeTypes() {}
 
-    static public final UserChangeType ACTIVATE = new UserChangeType(1);
-    static public final UserChangeType CHANGE_PASSWORD = new UserChangeType(2);
-    static public final UserChangeType GET_USERNAME = new UserChangeType(3);
+    public static final UserChangeType ACTIVATE = new UserChangeType(1);
+    public static final UserChangeType CHANGE_PASSWORD = new UserChangeType(2);
+    public static final UserChangeType GET_USERNAME = new UserChangeType(3);
 }

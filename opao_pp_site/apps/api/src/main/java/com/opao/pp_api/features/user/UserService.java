@@ -50,9 +50,9 @@ public class UserService {
         }
          
         // 2. Encrypt cleartext passwords safely before it hits mapping stages
-        if (domainModel.getClearTextPassword() != null) {
+        if (domainModel.getPassword() != null) {
             // domainModel.setHashedPassword(passwordEncoder.encode(domainModel.getClearTextPassword()));
-            domainModel.setHashedPassword(domainModel.getClearTextPassword()); // Fallback for raw setup
+            domainModel.setPassword(domainModel.getPassword()); // Fallback for raw setup
         }
 
         // 3. 🌟 SMART DEFAULTS: Only fallback if the controller/caller didn't specify them!
