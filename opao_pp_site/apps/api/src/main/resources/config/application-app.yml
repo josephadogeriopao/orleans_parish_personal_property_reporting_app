@@ -1,0 +1,15 @@
+application:
+  security:
+    argon2:
+      salt-length: 16       
+      hash-length: 32       
+      parallelism: 1        
+      memory: 65536         
+      iterations: 3         
+  frontend-url: "${FRONTEND_URL:http://localhost:3000}"
+  email:
+    from-address: "${EMAIL_FROM_ADDRESS:josephadogeridev@gmail.com}"
+    from-name: "Orleans Parish Assessor's Office"
+  verification:
+    code-duration-ms: 3600000        
+    code-duration-text: "1 hour"
