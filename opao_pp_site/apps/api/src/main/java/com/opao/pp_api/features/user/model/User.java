@@ -21,8 +21,7 @@ public class User {
     private String fullName;      
     private String email;         
     private String phoneNumber;    
-    private String clearTextPassword;
-    private String hashedPassword;
+    private String password;
     private boolean isActive;
     
     // Added missing relation destination slots for MapStruct flattening

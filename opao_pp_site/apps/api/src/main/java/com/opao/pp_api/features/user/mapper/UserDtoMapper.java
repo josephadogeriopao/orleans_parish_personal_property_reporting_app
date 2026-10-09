@@ -22,7 +22,7 @@ public class UserDtoMapper {
                 .fullName(request.getFullName())
                 .email(request.getEmail()) 
                 .phoneNumber(request.getPhoneNumber())
-                .clearTextPassword(request.getClearTextPassword()) 
+                .password(request.getClearTextPassword()) 
                 .isActive(true) 
                 .build();
     }
@@ -39,7 +39,7 @@ public class UserDtoMapper {
                 .fullName(request.getFullName())                
                 .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
-                .clearTextPassword(request.getClearTextPassword())
+                .password(request.getClearTextPassword())
                 .userRoleId(request.getUserRoleId() != null ? UserRoles.fromId(request.getUserRoleId().intValue()) : null)
                 .userStatusId(request.getUserStatusId() != null ? UserStatuses.fromId(request.getUserStatusId().intValue()) : null)     
                 .build();

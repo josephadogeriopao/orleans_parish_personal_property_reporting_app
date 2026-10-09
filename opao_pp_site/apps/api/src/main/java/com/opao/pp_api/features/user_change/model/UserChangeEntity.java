@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.PrePersist;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -27,30 +28,47 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor // Generates a public no-argument constructor
 @AllArgsConstructor // Generates a constructor with all fields
 @Table(name = "user_change")
-public class UserChangeEntity implements Serializable{
+public class UserChangeEntity implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @NotNull
+    @Basic(optional = false) // Removed @NotNull to let MySQL handle database generation smoothly
     @Column(name = "USER_CHANGE_ID")
     private Integer userChangeId;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = UserChangeConstants.VERIFICATION_CODE_MIN_LENGTH, max = UserChangeConstants.VERIFICATION_CODE_MAX_LENGTH)
     @Column(name = "VERIFICATION_CODE")
     private String verificationCode;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "INITIATED_TIME")  
-    private LocalDateTime initiatedTime = LocalDateTime.now();
+    private LocalDateTime initiatedTime;
+
     @JoinColumn(name = "USER_CHANGE_TYPE_ID", referencedColumnName = "USER_CHANGE_TYPE_ID")
     @ManyToOne(optional = false)
     private UserChangeTypeEntity userChangeTypeId;
+
     @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
     @ManyToOne(optional = false)
     private UserEntity userId;
 
+    /**
+     * 💡 JPA Lifecycle Hook
+     * Guarantees that initiatedTime is never null right before saving, 
+     * bypassing any Lombok constructor assignment issues.
+     */
+    @PrePersist
+    protected void onCreate() {
+        if (this.initiatedTime == null) {
+            this.initiatedTime = LocalDateTime.now();
+        }
+    }
+
+    // Secondary constructors kept for legacy compatibility if called elsewhere in your project
     public UserChangeEntity(Integer userChangeId) {
         this.userChangeId = userChangeId;
     }
@@ -61,7 +79,7 @@ public class UserChangeEntity implements Serializable{
         this.initiatedTime = initiatedTime;
     }
 
-    @Override
+        @Override
     public int hashCode() {
         int hash = 0;
         hash += (userChangeId != null ? userChangeId.hashCode() : 0);
@@ -85,6 +103,5 @@ public class UserChangeEntity implements Serializable{
     public String toString() {
         return "com.opao.pp_api.features.user_change.model.UserChangeEntity[ userChangeId=" + userChangeId + " ]";
     }
-    
     
 }
